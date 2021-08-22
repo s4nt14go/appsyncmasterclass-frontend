@@ -1,6 +1,7 @@
 import {
   getMyProfile,
-  getMyTimeline, tweet
+  getMyTimeline, tweet,
+  like, unlike, retweet, unretweet, reply
 } from '../../../lib/backend'
 
 export default {
@@ -17,6 +18,23 @@ export default {
   async createTweet({ commit, dispatch }, { text }) {
     const newTweet = await tweet(text);
     commit("TWITTER_CREATE", newTweet);
-    dispatch("getMyTimeline", 10);
+    await dispatch("getMyTimeline", 10);
+  },
+
+  async likeTweet(_, tweetId) {
+    await like(tweetId);
+  },
+  async unlikeTweet(_, tweetId) {
+    await unlike(tweetId);
+  },
+  async retweetTweet(_, tweetId) {
+    await retweet(tweetId);
+  },
+  async unretweetTweet(_, tweetId) {
+    await unretweet(tweetId);
+  },
+  async replyTweet({ dispatch }, { tweetId, text }) {
+    await reply(tweetId, text);
+    await dispatch("getMyTimeline", 10);
   }
 };
