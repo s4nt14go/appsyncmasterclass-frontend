@@ -26,8 +26,17 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue'),
-    meta: { protected: true },
+    meta: { protected: true }
   },
+  {
+    path: '/:screenName',
+    name: 'Profile',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "home" */ '../views/Profile.vue'),
+    meta: { protected: true }
+  }
 ]
 
 const router = new VueRouter({
