@@ -36,7 +36,7 @@
           </button>
         </div>
 
-        <Tweets />
+        <Tweets :tweets="tweets" />
 
       </div>
     </div>
@@ -77,6 +77,7 @@ export default {
     ]),
     ...mapActions('twitter', [
       'createTweet',
+      'loadMyTimeline'
     ]),
     async addNewTweet() {
       if (!this.tweet.text) return;
@@ -88,6 +89,7 @@ export default {
   },
   async created() {
     await this.loginUserIfAlreadyAuthenticated();
+    await this.loadMyTimeline();
   },
 }
 </script>
