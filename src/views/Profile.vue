@@ -5,7 +5,7 @@
 
       <div class="w-1/2 h-full overflow-y-scroll">
         <div class="px-5 py-3 border-b border-lighter flex items-center">
-          <button class="rounded-full p-3 px-4 focus:outline-none hover:bg-lightblue">
+          <button @click="gotoHome()" class="rounded-full p-3 px-4 focus:outline-none hover:bg-lightblue">
             <i class="fas fa-arrow-left text-blue"></i>
           </button>
           <div class="lg:block ml-4">
@@ -53,20 +53,22 @@
                 <i class="fas fa-envelope"></i>
               </button>
               <button v-if="!profile.following"
-                      class="ml-auto text-blue font-bold px-4 py-2 rounded-full border border-blue mb-2 hover:bg-lightblue">
+                      @click="followUser()"
+                      class="ml-auto text-blue font-bold px-4 py-2 rounded-full border border-blue mb-2 hover:bg-lightblue" style="width:108px;">
                 Follow
               </button>
               <button v-if="profile.following"
                       @mouseover="followingLabel='Unfollow'"
                       @mouseleave="followingLabel='Following'"
-                      class="ml-auto text-white bg-blue font-bold px-4 py-2 rounded-full border mb-2 hover:bg-red-700">
+                      @click="unfollowUser()"
+                      class="ml-auto text-white bg-blue font-bold px-4 py-2 rounded-full border mb-2 hover:bg-red-700" style="width:108px;">
                 {{ followingLabel }}
               </button>
             </div>
           </div>
           <div>
             <p class="font-bold text-xl">{{profile.name}}</p>
-            <p class="text-dark">@{{profile.screenName}}</p>
+            <p class="text-dark">@{{profile.screenName}}<span v-if="profile.followedBy" class="text-sm font-medium bg-gray-100 py-1 px-1 mx-2 rounded text-gray-500 align-middle">Follows you</span></p>
             <p class="my-2">{{profile.bio}}</p>
             <div class="flex flex-row mt-1 mb-2">
               <div v-if="profile.location" class="flex flex-row mr-4">
@@ -81,11 +83,11 @@
               <p class="text-dark">Joined {{joinedDate}}</p>
             </div>
             <div class="flex flex-row mt-1">
-              <button class="mr-4 flex flex-row hover:underline">
+              <button @click="goToFollowing()" class="mr-4 flex flex-row hover:underline">
                 <span class="font-bold">{{profile.followingCount}}</span>
                 <span class="text-dark whitespace-pre"> Following</span>
               </button>
-              <button class="flex flex-row hover:underline">
+              <button @click="goToFollowers()" class="flex flex-row hover:underline">
                 <span class="font-bold">{{profile.followersCount}}</span>
                 <span class="text-dark whitespace-pre"> Followers</span>
               </button>
@@ -170,11 +172,54 @@ export default {
       'loadProfile',
       'loadTweets'
     ]),
+    ...mapActions('profilePage', {
+      follow: 'followUser',
+      unfollow: 'unfollowUser',
+    }),
+    gotoHome() {
+      this.$router.push({
+        name: 'Home',
+      })
+    },
+    goToFollowing() {
+      this.$router.push({
+        name: 'Following',
+        params: {
+          screenName: this.profile.screenName
+        }
+      })
+    },
+    goToFollowers() {
+      this.$router.push({
+        name: 'Followers',
+        params: {
+          screenName: this.profile.screenName
+        }
+      })
+    },
     setUpProfile() {
       this.showSetUpProfileModal = true
     },
     editProfile() {
       this.showEditProfileModal = true
+    },
+    async followUser() {
+      this.profile.following = true;
+      this.profile.followersCount++;
+      await this.follow(this.profile.id).catch(err => {
+        console.error(`failed to follow [${this.profile.id}]`, err);
+        this.profile.following = false;
+        this.profile.followersCount--;
+      })
+    },
+    async unfollowUser() {
+      this.profile.following = false;
+      this.profile.followersCount--;
+      await this.unfollow(this.profile.id).catch(err => {
+        console.error(`failed to unfollow [${this.profile.id}]`, err);
+        this.profile.following = true;
+        this.profile.followersCount++;
+      })
     },
   },
   async created() {

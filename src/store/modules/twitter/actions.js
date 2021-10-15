@@ -1,7 +1,9 @@
 import {
   getMyProfile, getProfileByScreenName, getImageUploadUrl, editMyProfile,
   getMyTimeline, tweet, getTweets,
-  like, unlike, retweet, unretweet, reply
+  like, unlike, retweet, unretweet, reply,
+  follow, unfollow,
+  getFollowers, getFollowing,
 } from '../../../lib/backend'
 
 export default {
@@ -75,5 +77,21 @@ export default {
     const profile = await editMyProfile(newProfile);
     commit("PROFILE_SET", profile);
     return profile;
+  },
+
+  async followUser(_, profileId) {
+    await follow(profileId);
+  },
+  async unfollowUser(_, profileId) {
+    await unfollow(profileId);
+  },
+
+  async getFollowers({ commit }, { userId, limit }) {
+    const followers = await getFollowers(userId, limit);
+    commit("TWITTER_FOLLOWERS", followers);
+  },
+  async getFollowing({ commit }, { userId, limit }) {
+    const following = await getFollowing(userId, limit);
+    commit("TWITTER_FOLLOWING", following);
   },
 };
