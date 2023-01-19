@@ -51,6 +51,7 @@
 <script>
 import ReplyOverlay from './ReplyOverlay.vue'
 import { mapActions } from 'vuex';
+
 export default {
   name: 'Tweet',
   props: ['tweet'],
@@ -115,10 +116,6 @@ export default {
             })
       }
     },
-    async sendReplay() {
-      await this.reply({ tweetId: this.tweet.id, text: this.text })
-      this.showReplyOverlay = false
-    }
   }
 }
 </script>

@@ -3,6 +3,22 @@ import VueRouter from 'vue-router'
 import Root from '../views/Root.vue'
 import AuthMiddleware  from './auth.guard'
 
+// avoid NavigationDuplicated
+// https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject)
+    return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch((err) => {
+    if (VueRouter.isNavigationFailure(err)) {
+      // resolve err
+      return err
+    }
+    // rethrow error
+    return Promise.reject(err)
+  })
+}
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -26,6 +42,15 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue'),
+    meta: { protected: true }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue'),
     meta: { protected: true }
   },
   {
