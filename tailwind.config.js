@@ -7,14 +7,17 @@ module.exports = {
     container: {
       center: true
     },
+    maxHeight: {
+      'full': '85%',
+    },
     extend: {
       fontFamily: {
         sans: [...defaultTheme.fontFamily.sans]
       },
       colors: {
-        'blue': '#1da1f2',
+        'blue': '#1DA1F2',
         'darkblue': '#2795D9',
-        'lightblue': '#eff9ff',
+        'lightblue': '#EFF9FF',
         'dark': '#657786',
         'light': '#AAB8C2',
         'lighter': '#E1E8ED',
