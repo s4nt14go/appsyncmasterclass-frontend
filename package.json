@@ -11,6 +11,7 @@
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "autoprefixer": "^9",
     "axios": "^0.23.0",
+    "register-service-worker": "^1.7.1",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "postcss": "^7",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@aws-amplify/ui-vue": "^0.3.2",
+    "@vue/cli-plugin-pwa": "~4.5.10",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -35,7 +37,7 @@
     "graphql-tag": "^2.11.0",
     "vue-cli-plugin-tailwind": "~2.0.5",
     "vue-template-compiler": "^2.6.11",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.0"
   },
   "eslintConfig": {
     "root": true,
