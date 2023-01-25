@@ -1,5 +1,21 @@
 import { Auth } from 'aws-amplify'
+import AWS from 'aws-sdk'
 import router from '../../../router'
+
+
+// Add all process.env used:
+const { VUE_APP_REGION, VUE_APP_IDENTITY_POOL_ID, VUE_APP_KINESIS_FIREHOSE_STREAM_NAME } = process.env;
+if (!VUE_APP_REGION || !VUE_APP_IDENTITY_POOL_ID || !VUE_APP_KINESIS_FIREHOSE_STREAM_NAME) {
+  console.log('process.env', process.env);
+  throw new Error(`Undefined env var!`);
+}
+AWS.config.region = VUE_APP_REGION;
+
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  IdentityPoolId: VUE_APP_IDENTITY_POOL_ID
+})
+
+const FirehoseClient = new AWS.Firehose();
 
 export default {
   loginUser({ commit }, user) {
@@ -50,4 +66,14 @@ export default {
       await dispatch("twitter/subscribeNotifications", null, { root: true });
     }
   },
+
+  async trackEvent(_, event) {
+    const response = await FirehoseClient.putRecord({
+      DeliveryStreamName: VUE_APP_KINESIS_FIREHOSE_STREAM_NAME,
+      Record: {
+        Data: JSON.stringify(event)
+      }
+    }).promise();
+    console.log(response);
+  }
 };
